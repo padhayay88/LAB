@@ -1,0 +1,137 @@
+.billing {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.billing h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.billing button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.billing button:hover {
+    background-color: #0056b3;
+}
+
+.billing-form {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.billing-form h2 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.billing-form input,
+.billing-form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.billing-form button {
+    margin-right: 10px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
+
+.billing-form button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+}
+
+.billing-form button[type="submit"]:hover {
+    background-color: #218838;
+}
+
+.billing-form button[type="button"] {
+    background-color: #6c757d;
+    color: white;
+}
+
+.billing-form button[type="button"]:hover {
+    background-color: #545b62;
+}
+
+.billing-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.billing-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.billing-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.billing-card.income {
+    border-left: 5px solid #28a745;
+}
+
+.billing-card.expense {
+    border-left: 5px solid #dc3545;
+}
+
+.billing-card h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.billing-card p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.billing-card button {
+    margin-right: 10px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.billing-card button:first-of-type {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.billing-card button:first-of-type:hover {
+    background-color: #e0a800;
+}
+
+.billing-card button:last-of-type {
+    background-color: #dc3545;
+    color: white;
+}
+
+.billing-card button:last-of-type:hover {
+    background-color: #c82333;
+}

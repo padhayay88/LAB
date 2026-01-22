@@ -1,0 +1,129 @@
+.labstaff {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.labstaff h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.labstaff button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.labstaff button:hover {
+    background-color: #0056b3;
+}
+
+.labstaff-form {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.labstaff-form h2 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.labstaff-form input,
+.labstaff-form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.labstaff-form button {
+    margin-right: 10px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
+
+.labstaff-form button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+}
+
+.labstaff-form button[type="submit"]:hover {
+    background-color: #218838;
+}
+
+.labstaff-form button[type="button"] {
+    background-color: #6c757d;
+    color: white;
+}
+
+.labstaff-form button[type="button"]:hover {
+    background-color: #545b62;
+}
+
+.labstaff-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.labstaff-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.labstaff-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.labstaff-card h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.labstaff-card p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.labstaff-card button {
+    margin-right: 10px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.labstaff-card button:first-of-type {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.labstaff-card button:first-of-type:hover {
+    background-color: #e0a800;
+}
+
+.labstaff-card button:last-of-type {
+    background-color: #dc3545;
+    color: white;
+}
+
+.labstaff-card button:last-of-type:hover {
+    background-color: #c82333;
+}

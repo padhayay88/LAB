@@ -1,0 +1,138 @@
+.appointments {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.appointments h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.appointments button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.appointments button:hover {
+    background-color: #0056b3;
+}
+
+.appointment-form {
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.appointment-form h2 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.appointment-form input,
+.appointment-form select,
+.appointment-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.appointment-form textarea {
+    height: 80px;
+    resize: vertical;
+}
+
+.appointment-form button {
+    margin-right: 10px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
+
+.appointment-form button[type="submit"] {
+    background-color: #28a745;
+    color: white;
+}
+
+.appointment-form button[type="submit"]:hover {
+    background-color: #218838;
+}
+
+.appointment-form button[type="button"] {
+    background-color: #6c757d;
+    color: white;
+}
+
+.appointment-form button[type="button"]:hover {
+    background-color: #545b62;
+}
+
+.appointment-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.appointment-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.appointment-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.appointment-card.completed {
+    border-left: 5px solid #28a745;
+}
+
+.appointment-card h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.appointment-card p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.appointment-card button {
+    margin-right: 10px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.appointment-card button:first-of-type {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.appointment-card button:first-of-type:hover {
+    background-color: #e0a800;
+}
+
+.appointment-card button:last-of-type {
+    background-color: #dc3545;
+    color: white;
+}
+
+.appointment-card button:last-of-type:hover {
+    background-color: #c82333;
+}

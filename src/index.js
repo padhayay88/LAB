@@ -3,6 +3,18 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { io } from 'socket.io-client';
+
+// Connect to the WebSocket server
+const socket = io('http://localhost:5000');
+
+// Example: Listen for messages from the server
+socket.on('message', (data) => {
+    console.log('Message from server:', data);
+});
+
+// Example: Emit an event to the server
+socket.emit('update', { message: 'Hello from the client!' });
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
