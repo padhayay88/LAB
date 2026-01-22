@@ -38,10 +38,6 @@ const Analytics = () => {
     });
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        fetchAnalyticsData();
-    }, []);
-
     const fetchAnalyticsData = useCallback(async () => {
         try {
             const [testsRes, reportsRes, patientsRes, appointmentsRes, financeRes] = await Promise.all([
@@ -70,6 +66,11 @@ const Analytics = () => {
             setLoading(false);
         }
     }, []);
+
+// eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        fetchAnalyticsData();
+    }, [fetchAnalyticsData]);
 
     const processTestsByMonth = (tests) => {
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
