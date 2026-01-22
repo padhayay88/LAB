@@ -1,8 +1,8 @@
 import Navbar from './components/Navbar';
 import Home from './components/Home';
 import Dashboard from './components/Dashboard';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useState } from 'react';
 import Appointments from './components/Appointments';
 import LabStaff from './components/LabStaff';
 import Inventory from './components/Inventory';
@@ -12,7 +12,7 @@ import Admin from './components/Admin';
 import Login from './components/Login';
 import Patients from './components/Patients';
 import Tests from './components/Tests';
-import Reports from './components/Reports';
+
 import Doctors from './components/Doctors';
 import './App.css';
 import Footer from './components/Footer';

@@ -16,7 +16,7 @@ const AddTest = () => {
     useEffect(() => {
         const fetchPatients = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/patients`);
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/patients`);
                 setPatients(response.data);
             } catch (error) {
                 console.error('Error fetching patients:', error);
@@ -38,7 +38,7 @@ const AddTest = () => {
         setMessage('');
         try {
             // Replace with your actual backend endpoint
-            await axios.post(`${process.env.REACT_APP_API_URL}/tests`, formData);
+            await axios.post(`${process.env.REACT_APP_API_URL}/api/tests`, formData);
             setMessage('Test added successfully!');
             setFormData({ patientId: '', testType: '', testDate: '', price: '' });
         } catch (error) {

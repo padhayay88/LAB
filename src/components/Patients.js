@@ -56,7 +56,7 @@ const Patients = () => {
             if (editingPatient) {
                 await axios.put(`${process.env.REACT_APP_API_URL}/patients/${editingPatient._id}`, data);
             } else {
-                await axios.post(`${process.env.REACT_APP_API_URL}/patients`, data);
+                await axios.post(`${process.env.REACT_APP_API_URL}/api/patients`, data);
             }
             fetchPatients();
             setShowForm(false);
