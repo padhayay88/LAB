@@ -22,7 +22,7 @@ const LabStaff = () => {
     const fetchLabStaff = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:5001/api/labstaff');
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/labstaff`);
             setLabStaff(response.data);
         } catch (error) {
             console.error('Error fetching lab staff:', error);
@@ -43,9 +43,9 @@ const LabStaff = () => {
 
         try {
             if (editingStaff) {
-                await axios.put(`http://localhost:5001/api/labstaff/${editingStaff._id}`, formData);
+                await axios.put(`${process.env.REACT_APP_API_URL}/labstaff/${editingStaff._id}`, formData);
             } else {
-                await axios.post('http://localhost:5001/api/labstaff', formData);
+                await axios.post(`${process.env.REACT_APP_API_URL}/labstaff`, formData);
             }
             fetchLabStaff();
             setShowForm(false);
@@ -77,7 +77,7 @@ const LabStaff = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this staff member?')) {
             try {
-                await axios.delete(`http://localhost:5001/api/labstaff/${id}`);
+                await axios.delete(`${process.env.REACT_APP_API_URL}/labstaff/${id}`);
                 fetchLabStaff();
             } catch (error) {
                 console.error('Error deleting lab staff:', error);

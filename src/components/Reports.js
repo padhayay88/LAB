@@ -27,7 +27,7 @@ const Reports = () => {
     const fetchReports = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:5001/api/reports');
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/reports`);
             setReports(response.data);
         } catch (error) {
             console.error('Error fetching reports:', error);
@@ -48,9 +48,9 @@ const Reports = () => {
 
         try {
             if (editingReport) {
-                await axios.put(`http://localhost:5001/api/reports/${editingReport._id}`, formData);
+                await axios.put(`${process.env.REACT_APP_API_URL}/reports/${editingReport._id}`, formData);
             } else {
-                await axios.post('http://localhost:5001/api/reports', formData);
+                await axios.post(`${process.env.REACT_APP_API_URL}/reports`, formData);
             }
             fetchReports();
             setShowForm(false);
@@ -92,7 +92,7 @@ const Reports = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this report?')) {
             try {
-                await axios.delete(`http://localhost:5001/api/reports/${id}`);
+                await axios.delete(`${process.env.REACT_APP_API_URL}/reports/${id}`);
                 fetchReports();
             } catch (error) {
                 console.error('Error deleting report:', error);

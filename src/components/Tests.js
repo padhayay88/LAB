@@ -20,7 +20,7 @@ const Tests = () => {
     const fetchTests = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:5001/api/tests');
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/tests`);
             setTests(response.data);
         } catch (error) {
             console.error('Error fetching tests:', error);
@@ -45,9 +45,9 @@ const Tests = () => {
 
         try {
             if (editingTest) {
-                await axios.put(`http://localhost:5001/api/tests/${editingTest._id}`, data);
+                await axios.put(`${process.env.REACT_APP_API_URL}/tests/${editingTest._id}`, data);
             } else {
-                await axios.post('http://localhost:5001/api/tests', data);
+                await axios.post(`${process.env.REACT_APP_API_URL}/tests`, data);
             }
             fetchTests();
             setShowForm(false);
@@ -75,7 +75,7 @@ const Tests = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this test?')) {
             try {
-                await axios.delete(`http://localhost:5001/api/tests/${id}`);
+                await axios.delete(`${process.env.REACT_APP_API_URL}/tests/${id}`);
                 fetchTests();
             } catch (error) {
                 console.error('Error deleting test:', error);

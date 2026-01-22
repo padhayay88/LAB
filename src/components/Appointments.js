@@ -23,7 +23,7 @@ const Appointments = () => {
     const fetchAppointments = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:5001/api/appointments');
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/appointments`);
             setAppointments(response.data);
         } catch (error) {
             console.error('Error fetching appointments:', error);
@@ -44,9 +44,9 @@ const Appointments = () => {
 
         try {
             if (editingAppointment) {
-                await axios.put(`http://localhost:5001/api/appointments/${editingAppointment._id}`, formData);
+                await axios.put(`${process.env.REACT_APP_API_URL}/appointments/${editingAppointment._id}`, formData);
             } else {
-                await axios.post('http://localhost:5001/api/appointments', formData);
+                await axios.post(`${process.env.REACT_APP_API_URL}/appointments`, formData);
             }
             fetchAppointments();
             setShowForm(false);
@@ -80,7 +80,7 @@ const Appointments = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this appointment?')) {
             try {
-                await axios.delete(`http://localhost:5001/api/appointments/${id}`);
+                await axios.delete(`${process.env.REACT_APP_API_URL}/appointments/${id}`);
                 fetchAppointments();
             } catch (error) {
                 console.error('Error deleting appointment:', error);

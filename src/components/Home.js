@@ -1,9 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Home.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserPlus, faVial, faFileAlt, faUserMd, faCalendarAlt, faBoxes } from '@fortawesome/free-solid-svg-icons';
 
 const Home = () => {
+    const navigate = useNavigate();
     return (
         <div className="home">
             <header className="home-header">
@@ -16,27 +18,27 @@ const Home = () => {
             <section className="quick-actions">
                 <h2>Quick Actions</h2>
                 <div className="cards">
-                    <div className="card">
+                    <div className="card" onClick={() => navigate("/patients/new")}>
                         <FontAwesomeIcon icon={faUserPlus} size="2x" />
                         <h3>Register Patient</h3>
                     </div>
-                    <div className="card">
+                    <div className="card" onClick={() => navigate("/tests/new")}>
                         <FontAwesomeIcon icon={faVial} size="2x" />
                         <h3>Add Test</h3>
                     </div>
-                    <div className="card">
+                    <div className="card" onClick={() => navigate("/reports")}>
                         <FontAwesomeIcon icon={faFileAlt} size="2x" />
                         <h3>View Reports</h3>
                     </div>
-                    <div className="card">
+                    <div className="card" onClick={() => navigate("/doctors")}>
                         <FontAwesomeIcon icon={faUserMd} size="2x" />
                         <h3>Doctors</h3>
                     </div>
-                    <div className="card">
+                    <div className="card" onClick={() => navigate("/appointments")}>
                         <FontAwesomeIcon icon={faCalendarAlt} size="2x" />
                         <h3>Appointments</h3>
                     </div>
-                    <div className="card">
+                    <div className="card" onClick={() => navigate("/inventory")}>
                         <FontAwesomeIcon icon={faBoxes} size="2x" />
                         <h3>Inventory</h3>
                     </div>

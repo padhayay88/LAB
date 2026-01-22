@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './Patients.css';
 
@@ -24,7 +25,7 @@ const Patients = () => {
     const fetchPatients = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:5001/api/patients');
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/patients`);
             setPatients(response.data);
         } catch (error) {
             console.error('Error fetching patients:', error);
@@ -53,9 +54,9 @@ const Patients = () => {
 
         try {
             if (editingPatient) {
-                await axios.put(`http://localhost:5001/api/patients/${editingPatient._id}`, data);
+                await axios.put(`${process.env.REACT_APP_API_URL}/patients/${editingPatient._id}`, data);
             } else {
-                await axios.post('http://localhost:5001/api/patients', data);
+                await axios.post(`${process.env.REACT_APP_API_URL}/patients`, data);
             }
             fetchPatients();
             setShowForm(false);
@@ -89,7 +90,7 @@ const Patients = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this patient?')) {
             try {
-                await axios.delete(`http://localhost:5001/api/patients/${id}`);
+                await axios.delete(`${process.env.REACT_APP_API_URL}/patients/${id}`);
                 fetchPatients();
             } catch (error) {
                 console.error('Error deleting patient:', error);
@@ -194,6 +195,7 @@ const Patients = () => {
                             </ul>
                             <button onClick={() => handleEdit(patient)}>Edit</button>
                             <button onClick={() => handleDelete(patient._id)}>Delete</button>
+                            <Link to={`/patient/${patient._id}`}><button>View Profile</button></Link>
                         </div>
                     ))
                 )}

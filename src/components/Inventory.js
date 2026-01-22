@@ -22,7 +22,7 @@ const Inventory = () => {
     const fetchInventory = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:5001/api/inventory');
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/inventory`);
             setInventory(response.data);
         } catch (error) {
             console.error('Error fetching inventory:', error);
@@ -43,9 +43,9 @@ const Inventory = () => {
 
         try {
             if (editingItem) {
-                await axios.put(`http://localhost:5001/api/inventory/${editingItem._id}`, formData);
+                await axios.put(`${process.env.REACT_APP_API_URL}/inventory/${editingItem._id}`, formData);
             } else {
-                await axios.post('http://localhost:5001/api/inventory', formData);
+                await axios.post(`${process.env.REACT_APP_API_URL}/inventory`, formData);
             }
             fetchInventory();
             setShowForm(false);
@@ -77,7 +77,7 @@ const Inventory = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this inventory item?')) {
             try {
-                await axios.delete(`http://localhost:5001/api/inventory/${id}`);
+                await axios.delete(`${process.env.REACT_APP_API_URL}/inventory/${id}`);
                 fetchInventory();
             } catch (error) {
                 console.error('Error deleting inventory item:', error);

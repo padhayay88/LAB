@@ -27,7 +27,7 @@ ChartJS.register(
     Legend
 );
 
-const Analytics = () => {
+const LabPerformanceOverview = () => {
     const [analyticsData, setAnalyticsData] = useState({
         testsByMonth: [],
         revenueByMonth: [],
@@ -145,12 +145,12 @@ const Analytics = () => {
     };
 
     if (loading) {
-        return <div className="analytics"><h1>Analytics</h1><p>Loading analytics data...</p></div>;
+        return <div className="analytics"><h1>Lab Performance Overview</h1><p>Loading analytics data...</p></div>;
     }
 
     return (
         <div className="analytics">
-            <h1>Analytics Dashboard</h1>
+            <h1>Lab Performance Overview</h1>
 
             <div className="stats-overview">
                 <div className="stat-card">
@@ -191,4 +191,4 @@ const Analytics = () => {
     );
 };
 
-export default Analytics;
+export default LabPerformanceOverview;

@@ -19,7 +19,7 @@ const Admin = () => {
     const fetchStats = async () => {
         try {
             // Fetch tests count
-            const testsResponse = await axios.get('http://localhost:5001/api/tests');
+            const testsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/tests`);
             const todaysTests = testsResponse.data.filter(test => {
                 const testDate = new Date(test.createdAt);
                 const today = new Date();
@@ -27,17 +27,17 @@ const Admin = () => {
             }).length;
 
             // Fetch pending reports (assuming status 'Pending')
-            const reportsResponse = await axios.get('http://localhost:5001/api/reports');
+            const reportsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/reports`);
             const pendingSamples = reportsResponse.data.filter(report => report.status === 'Pending').length;
 
             // Fetch revenue from finance records
-            const financeResponse = await axios.get('http://localhost:5001/api/finance');
+            const financeResponse = await axios.get(`${process.env.REACT_APP_API_URL}/finance`);
             const revenue = financeResponse.data
                 .filter(record => record.transactionType === 'Income')
                 .reduce((sum, record) => sum + parseFloat(record.amount), 0);
 
             // Fetch low stock items (assuming quantity < 10 is low)
-            const inventoryResponse = await axios.get('http://localhost:5001/api/inventory');
+            const inventoryResponse = await axios.get(`${process.env.REACT_APP_API_URL}/inventory`);
             const lowStockItems = inventoryResponse.data.filter(item => item.quantity < 10).length;
 
             // For operational machines, we'll simulate this as all machines are operational for now

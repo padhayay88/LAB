@@ -1,50 +1,94 @@
-import React from 'react';
-import { Bar } from 'react-chartjs-2';
-import './Dashboard.css';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import './Dashboard.css'; // Make sure to create/update this CSS file
 
 const Dashboard = () => {
-    const data = {
-        labels: ['Patients', 'Tests', 'Reports', 'Appointments', 'Inventory'],
-        datasets: [
-            {
-                label: 'Statistics',
-                data: [50, 120, 80, 30, 60],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)'
-                ],
-                borderWidth: 1
-            }
-        ]
-    };
+    const [stats, setStats] = useState({
+        totalPatients: 0,
+        totalTests: 0,
+        pendingReports: 0,
+        todaysAppointments: 0,
+        monthlyRevenue: 0,
+    });
+    const [loading, setLoading] = useState(true);
 
-    const options = {
-        responsive: true,
-        plugins: {
-            legend: {
-                position: 'top',
-            },
-            title: {
-                display: true,
-                text: 'Pathology Dashboard Statistics',
-            },
-        },
-    };
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            try {
+                const [patientsRes, testsRes, reportsRes, appointmentsRes, financeRes] = await Promise.all([
+                    axios.get(`${process.env.REACT_APP_API_URL}/patients`),
+                    axios.get(`${process.env.REACT_APP_API_URL}/tests`),
+                    axios.get(`${process.env.REACT_APP_API_URL}/reports`),
+                    axios.get(`${process.env.REACT_APP_API_URL}/appointments`),
+                    axios.get(`${process.env.REACT_APP_API_URL}/finance`)
+                ]);
+
+                // Today's Appointments
+                const today = new Date().toISOString().split('T')[0];
+                const todaysAppointments = appointmentsRes.data.filter(app => app.date === today).length;
+
+                // Pending Reports
+                const pendingReports = reportsRes.data.filter(report => report.status === 'Pending').length;
+
+                // Monthly Revenue
+                const currentMonth = new Date().getMonth();
+                const currentYear = new Date().getFullYear();
+                const monthlyRevenue = financeRes.data
+                    .filter(record => {
+                        const recordDate = new Date(record.date);
+                        return record.transactionType === 'Income' &&
+                               recordDate.getMonth() === currentMonth &&
+                               recordDate.getFullYear() === currentYear;
+                    })
+                    .reduce((sum, record) => sum + parseFloat(record.amount), 0);
+
+                setStats({
+                    totalPatients: patientsRes.data.length,
+                    totalTests: testsRes.data.length,
+                    pendingReports,
+                    todaysAppointments,
+                    monthlyRevenue,
+                });
+            } catch (error) {
+                console.error('Error fetching dashboard data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDashboardData();
+    }, []);
 
     return (
         <div className="dashboard">
             <h1>Dashboard</h1>
-            <Bar data={data} options={options} />
+            {loading ? (
+                <p>Loading dashboard...</p>
+            ) : (
+                <div className="stats-overview">
+                    <div className="stat-card green">
+                        <h3>Total Patients</h3>
+                        <p>{stats.totalPatients}</p>
+                    </div>
+                    <div className="stat-card green">
+                        <h3>Total Tests</h3>
+                        <p>{stats.totalTests}</p>
+                    </div>
+                    <div className="stat-card yellow">
+                        <h3>Pending Reports</h3>
+                        <p>{stats.pendingReports}</p>
+                    </div>
+                    <div className="stat-card green">
+                        <h3>Today's Appointments</h3>
+                        <p>{stats.todaysAppointments}</p>
+                    </div>
+                    <div className="stat-card green">
+                        <h3>Monthly Revenue</h3>
+                        <p>${stats.monthlyRevenue.toFixed(2)}</p>
+                    </div>
+                </div>
+            )}
+            {/* Future charts will go here */}
         </div>
     );
 };

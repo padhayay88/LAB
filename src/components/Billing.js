@@ -29,7 +29,7 @@ const Billing = () => {
     const fetchFinances = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:5001/api/finance');
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/finance`);
             setFinances(response.data);
         } catch (error) {
             console.error('Error fetching finances:', error);
@@ -50,9 +50,9 @@ const Billing = () => {
 
         try {
             if (editingFinance) {
-                await axios.put(`http://localhost:5001/api/finance/${editingFinance._id}`, formData);
+                await axios.put(`${process.env.REACT_APP_API_URL}/finance/${editingFinance._id}`, formData);
             } else {
-                await axios.post('http://localhost:5001/api/finance', formData);
+                await axios.post(`${process.env.REACT_APP_API_URL}/finance`, formData);
             }
             fetchFinances();
             setShowForm(false);
@@ -91,7 +91,7 @@ const Billing = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this finance record?')) {
             try {
-                await axios.delete(`http://localhost:5001/api/finance/${id}`);
+                await axios.delete(`${process.env.REACT_APP_API_URL}/finance/${id}`);
                 fetchFinances();
             } catch (error) {
                 console.error('Error deleting finance record:', error);

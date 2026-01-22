@@ -1,23 +1,40 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Navbar.css';
 
-const Navbar = () => {
+const Navbar = ({ isAuthenticated, onLogout }) => {
+    const userRole = localStorage.getItem('role');
+
     return (
         <nav className="navbar">
-            <div className="navbar-logo">Diagnostic Lab</div>
+            <div className="navbar-logo"><Link to="/">Diagnostic Lab</Link></div>
             <ul className="navbar-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/patients">Patients</a></li>
-                <li><a href="/tests">Tests</a></li>
-                <li><a href="/reports">Reports</a></li>
-                <li><a href="/doctors">Doctors</a></li>
-                <li><a href="/appointments">Appointments</a></li>
-                <li><a href="/lab-staff">Lab Staff</a></li>
-                <li><a href="/inventory">Inventory</a></li>
-                <li><a href="/billing">Billing</a></li>
-                <li><a href="/analytics">Analytics</a></li>
-                <li><a href="/admin">Admin</a></li>
-                <li><a href="/login">Login</a></li>
+                {isAuthenticated ? (
+                    <>
+                        <li><Link to="/">Home</Link></li>
+                        <li><Link to="/patient-test-payment-list">Master List</Link></li>
+                        <li><Link to="/patients">Patients</Link></li>
+                        <li><Link to="/tests">Tests</Link></li>
+                        <li><Link to="/reports">Medical Reports Management</Link></li>
+                        <li><Link to="/appointments">Appointments</Link></li>
+                        <li><Link to="/inventory">Inventory</Link></li>
+                        <li><Link to="/billing">Billing</Link></li>
+                        <li><Link to="/dashboard">Dashboard</Link></li>
+                        {userRole === 'Admin' && (
+                            <>
+                                <li><Link to="/lab-staff">Lab Staff</Link></li>
+                                <li><Link to="/analytics">Lab Performance</Link></li>
+                                <li><Link to="/admin">Admin</Link></li>
+                            </>
+                        )}
+                        <li><button onClick={onLogout} className="logout-button">Logout</button></li>
+                    </>
+                ) : (
+                    <>
+                        <li><Link to="/">Home</Link></li>
+                        <li><Link to="/login">Login</Link></li>
+                    </>
+                )}
             </ul>
         </nav>
     );
