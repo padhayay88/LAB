@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Bar, Line, Pie } from 'react-chartjs-2';
 import {
@@ -42,7 +42,7 @@ const Analytics = () => {
         fetchAnalyticsData();
     }, []);
 
-    const fetchAnalyticsData = async () => {
+    const fetchAnalyticsData = useCallback(async () => {
         try {
             const [testsRes, reportsRes, patientsRes, appointmentsRes, financeRes] = await Promise.all([
                 axios.get('http://localhost:5001/api/tests'),
@@ -69,7 +69,7 @@ const Analytics = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     const processTestsByMonth = (tests) => {
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
