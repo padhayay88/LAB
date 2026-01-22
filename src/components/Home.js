@@ -55,28 +55,7 @@ const Home = () => {
                 </ul>
             </section>
 
-            {/* Statistics Section */}
-            <section className="statistics">
-                <h2>Our Achievements</h2>
-                <div className="stats">
-                    <div className="stat">
-                        <h3>🧪 500+</h3>
-                        <p>Tests Supported</p>
-                    </div>
-                    <div className="stat">
-                        <h3>👤 10,000+</h3>
-                        <p>Patients</p>
-                    </div>
-                    <div className="stat">
-                        <h3>📄 50,000+</h3>
-                        <p>Reports Generated</p>
-                    </div>
-                    <div className="stat">
-                        <h3>🏥 Multi-Lab</h3>
-                        <p>Support</p>
-                    </div>
-                </div>
-            </section>
+
         </div>
     );
 };
