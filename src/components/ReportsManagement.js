@@ -1,121 +1,83 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-// import './ReportsManagement.css'; // Create this file for styling
+import './ReportsManagement.css';
 
 const ReportsManagement = () => {
     const [reports, setReports] = useState([]);
     const [filteredReports, setFilteredReports] = useState([]);
-    const [filterStatus, setFilterStatus] = useState('All');
+    const [filters, setFilters] = useState({ status: 'All', date: '', patient: '' });
     const [loading, setLoading] = useState(true);
-    const [showForm, setShowForm] = useState(false);
-    const [editingReport, setEditingReport] = useState(null);
-    const [formData, setFormData] = useState({
-        patientId: '',
-        testId: '',
-        result: '',
-        status: 'Pending',
-        file: null
-    });
+    const navigate = useNavigate();
 
     useEffect(() => {
-        fetchReports();
+        const fetchEnrichedReports = async () => {
+            setLoading(true);
+            try {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/reports/enriched`);
+                setReports(response.data);
+                setFilteredReports(response.data);
+            } catch (error) {
+                console.error('Error fetching enriched reports:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchEnrichedReports();
     }, []);
 
     useEffect(() => {
-        if (filterStatus === 'All') {
-            setFilteredReports(reports);
-        } else {
-            setFilteredReports(reports.filter(report => report.status === filterStatus));
+        let tempReports = reports;
+        if (filters.status !== 'All') {
+            tempReports = tempReports.filter(report => report.status === filters.status);
         }
-    }, [filterStatus, reports]);
-
-    const fetchReports = async () => {
-        setLoading(true);
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/reports`);
-            setReports(response.data);
-        } catch (error) {
-            console.error('Error fetching reports:', error);
-        } finally {
-            setLoading(false);
+        if (filters.date) {
+            tempReports = tempReports.filter(report => new Date(report.date).toLocaleDateString() === new Date(filters.date).toLocaleDateString());
         }
-    };
-
-
-
-    const handleFileChange = (e) => {
-        setFormData({ ...formData, file: e.target.files[0] });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const data = new FormData();
-        Object.keys(formData).forEach(key => {
-            data.append(key, formData[key]);
-        });
-
-        try {
-            if (editingReport) {
-                await axios.put(`${process.env.REACT_APP_API_URL}/reports/${editingReport._id}`, data, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
-                });
-            } else {
-                await axios.post(`${process.env.REACT_APP_API_URL}/reports`, data, {
-                    headers: { 'Content-Type': 'multipart/form-data' }
-                });
-            }
-            fetchReports();
-            setShowForm(false);
-            setEditingReport(null);
-        } catch (error) {
-            console.error('Error saving report:', error);
+        if (filters.patient) {
+            tempReports = tempReports.filter(report => report.patientId && report.patientId.name.toLowerCase().includes(filters.patient.toLowerCase()));
         }
-    };
+        setFilteredReports(tempReports);
+    }, [filters, reports]);
 
-    const handleMarkAsReviewed = async (reportId) => {
-        try {
-            await axios.put(`${process.env.REACT_APP_API_URL}/reports/${reportId}`, { status: 'Reviewed' });
-            fetchReports();
-        } catch (error) {
-            console.error('Error marking report as reviewed:', error);
-        }
+    const handleFilterChange = (e) => {
+        setFilters({ ...filters, [e.target.name]: e.target.value });
     };
 
     return (
-        <div className="reports-management">
-            <h1>Medical Reports Management</h1>
-            <div className="filter-container">
-                <label>Filter by Status: </label>
-                <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
-                    <option value="All">All</option>
+        <div className="reports-management-page">
+            <h1>Reports Management</h1>
+            <div className="filters">
+                <select name="status" value={filters.status} onChange={handleFilterChange}>
+                    <option value="All">All Statuses</option>
                     <option value="Pending">Pending</option>
                     <option value="Completed">Completed</option>
-                    <option value="Reviewed">Reviewed</option>
                 </select>
+                <input type="date" name="date" value={filters.date} onChange={handleFilterChange} />
+                <input type="text" name="patient" value={filters.patient} onChange={handleFilterChange} placeholder="Filter by Patient Name..." />
             </div>
-            <button onClick={() => setShowForm(true)}>Add New Report</button>
-
-            {showForm && (
-                <form onSubmit={handleSubmit}>
-                    {/* Form fields for patientId, testId, result, status */}
-                    <input type="file" name="file" onChange={handleFileChange} />
-                    <button type="submit">{editingReport ? 'Update' : 'Upload'} Report</button>
-                </form>
+            {loading ? <p>Loading reports...</p> : (
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Patient Name</th>
+                            <th>Test Name</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filteredReports.map(report => (
+                            <tr key={report._id} onClick={() => navigate(`/patient/${report.patientId._id}`)} className="report-row">
+                                <td>{report.patientId ? report.patientId.name : 'N/A'}</td>
+                                <td>{report.testId ? report.testId.testName : 'N/A'}</td>
+                                <td>{new Date(report.date).toLocaleDateString()}</td>
+                                <td>{report.status}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             )}
-
-            <div className="report-list">
-                {loading ? <p>Loading reports...</p> : filteredReports.map(report => (
-                    <div key={report._id} className={`report-card status-${report.status.toLowerCase()}`}>
-                        <p>Patient ID: {report.patientId}</p>
-                        <p>Test ID: {report.testId}</p>
-                        <p>Status: {report.status}</p>
-                        {report.status === 'Completed' && (
-                            <button onClick={() => handleMarkAsReviewed(report._id)}>Mark as Reviewed</button>
-                        )}
-                        {/* Add view/download button for the report file */}
-                    </div>
-                ))}
-            </div>
         </div>
     );
 };

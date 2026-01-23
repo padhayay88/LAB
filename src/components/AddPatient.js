@@ -4,53 +4,15 @@ import axios from 'axios';
 
 const AddPatient = () => {
     const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        dateOfBirth: '',
-        gender: '',
-        email: '',
+        name: '',
         phone: '',
-        address: {
-            street: '',
-            city: '',
-            state: '',
-            zipCode: '',
-            country: 'USA'
-        },
-        emergencyContact: {
-            name: '',
-            relationship: '',
-            phone: ''
-        }
     });
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
+    const [generatedData, setGeneratedData] = useState(null);
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        const keys = name.split('.');
-        if (keys.length === 1) {
-            setFormData({ ...formData, [name]: value });
-        } else if (keys.length === 2) {
-            setFormData({
-                ...formData,
-                [keys[0]]: {
-                    ...formData[keys[0]],
-                    [keys[1]]: value
-                }
-            });
-        } else if (keys.length === 3) {
-            setFormData({
-                ...formData,
-                [keys[0]]: {
-                    ...formData[keys[0]],
-                    [keys[1]]: {
-                        ...formData[keys[0]][keys[1]],
-                        [keys[2]]: value
-                    }
-                }
-            });
-        }
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = async (e) => {
@@ -58,29 +20,14 @@ const AddPatient = () => {
         setLoading(true);
         setMessage('');
         try {
-            // Replace with your actual backend endpoint
-            await axios.post(`${process.env.REACT_APP_API_URL}/api/patients`, formData);
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/patients`, formData);
             setMessage('Patient registered successfully!');
-            setFormData({
-                firstName: '',
-                lastName: '',
-                dateOfBirth: '',
-                gender: '',
-                email: '',
-                phone: '',
-                address: {
-                    street: '',
-                    city: '',
-                    state: '',
-                    zipCode: '',
-                    country: 'USA'
-                },
-                emergencyContact: {
-                    name: '',
-                    relationship: '',
-                    phone: ''
-                }
+            setGeneratedData({
+                patientId: response.data.patientId,
+                eveningNumber: response.data.eveningNumber,
+                registrationDate: response.data.createdAt
             });
+            setFormData({ name: '', phone: '' });
         } catch (error) {
             setMessage('Error registering patient. Please try again.');
             console.error('Error saving patient:', error);
@@ -95,44 +42,9 @@ const AddPatient = () => {
             <form onSubmit={handleSubmit} className="patient-form">
                 <input
                     type="text"
-                    name="firstName"
-                    placeholder="First Name"
-                    value={formData.firstName}
-                    onChange={handleInputChange}
-                    required
-                />
-                <input
-                    type="text"
-                    name="lastName"
-                    placeholder="Last Name"
-                    value={formData.lastName}
-                    onChange={handleInputChange}
-                    required
-                />
-                <input
-                    type="date"
-                    name="dateOfBirth"
-                    placeholder="Date of Birth"
-                    value={formData.dateOfBirth}
-                    onChange={handleInputChange}
-                    required
-                />
-                <select
-                    name="gender"
-                    value={formData.gender}
-                    onChange={handleInputChange}
-                    required
-                >
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                </select>
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Email"
-                    value={formData.email}
+                    name="name"
+                    placeholder="Patient Name"
+                    value={formData.name}
                     onChange={handleInputChange}
                     required
                 />
@@ -144,67 +56,18 @@ const AddPatient = () => {
                     onChange={handleInputChange}
                     required
                 />
-                <input
-                    type="text"
-                    name="address.street"
-                    placeholder="Street"
-                    value={formData.address.street}
-                    onChange={handleInputChange}
-                    required
-                />
-                <input
-                    type="text"
-                    name="address.city"
-                    placeholder="City"
-                    value={formData.address.city}
-                    onChange={handleInputChange}
-                    required
-                />
-                <input
-                    type="text"
-                    name="address.state"
-                    placeholder="State"
-                    value={formData.address.state}
-                    onChange={handleInputChange}
-                    required
-                />
-                <input
-                    type="text"
-                    name="address.zipCode"
-                    placeholder="Zip Code"
-                    value={formData.address.zipCode}
-                    onChange={handleInputChange}
-                    required
-                />
-                <input
-                    type="text"
-                    name="emergencyContact.name"
-                    placeholder="Emergency Contact Name"
-                    value={formData.emergencyContact.name}
-                    onChange={handleInputChange}
-                    required
-                />
-                <input
-                    type="text"
-                    name="emergencyContact.relationship"
-                    placeholder="Relationship"
-                    value={formData.emergencyContact.relationship}
-                    onChange={handleInputChange}
-                    required
-                />
-                <input
-                    type="text"
-                    name="emergencyContact.phone"
-                    placeholder="Emergency Contact Phone"
-                    value={formData.emergencyContact.phone}
-                    onChange={handleInputChange}
-                    required
-                />
                 <button type="submit" disabled={loading}>
                     {loading ? 'Registering...' : 'Register Patient'}
                 </button>
             </form>
             {message && <p className="message">{message}</p>}
+            {generatedData && (
+                <div className="generated-data">
+                    <h2>Patient Registration Details</h2>
+                    <p><strong>Patient ID:</strong> {generatedData.patientId}</p>
+                    {generatedData.eveningNumber && <p><strong>Evening Number:</strong> {generatedData.eveningNumber}</p>}
+                </div>
+            )}
         </div>
     );
 };

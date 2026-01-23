@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Bar, Line, Pie } from 'react-chartjs-2';
+import { Bar, Line } from 'react-chartjs-2';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -8,12 +8,11 @@ import {
     BarElement,
     LineElement,
     PointElement,
-    ArcElement,
     Title,
     Tooltip,
     Legend,
 } from 'chart.js';
-import './Analytics.css';
+import './LabPerformanceOverview.css';
 
 ChartJS.register(
     CategoryScale,
@@ -21,171 +20,82 @@ ChartJS.register(
     BarElement,
     LineElement,
     PointElement,
-    ArcElement,
     Title,
     Tooltip,
     Legend
 );
 
 const LabPerformanceOverview = () => {
-    const [analyticsData, setAnalyticsData] = useState({
-        testsByMonth: [],
-        revenueByMonth: [],
-        patientCount: 0,
-        testCount: 0,
-        reportCount: 0,
-        appointmentCount: 0
-    });
+    const [analytics, setAnalytics] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const fetchAnalyticsData = useCallback(async () => {
-        try {
-            const [testsRes, reportsRes, patientsRes, appointmentsRes, financeRes] = await Promise.all([
-                axios.get(`${process.env.REACT_APP_API_URL}/tests`),
-                axios.get(`${process.env.REACT_APP_API_URL}/reports`),
-                axios.get(`${process.env.REACT_APP_API_URL}/patients`),
-                axios.get(`${process.env.REACT_APP_API_URL}/appointments`),
-                axios.get(`${process.env.REACT_APP_API_URL}/finance`)
-            ]);
-
-            // Process tests by month
-            const testsByMonth = processTestsByMonth(testsRes.data);
-            const revenueByMonth = processRevenueByMonth(financeRes.data);
-
-            setAnalyticsData({
-                testsByMonth,
-                revenueByMonth,
-                patientCount: patientsRes.data.length,
-                testCount: testsRes.data.length,
-                reportCount: reportsRes.data.length,
-                appointmentCount: appointmentsRes.data.length
-            });
-        } catch (error) {
-            console.error('Error fetching analytics data:', error);
-        } finally {
-            setLoading(false);
-        }
+    useEffect(() => {
+        const fetchAnalytics = async () => {
+            setLoading(true);
+            try {
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/analytics/summary`);
+                setAnalytics(response.data);
+            } catch (error) {
+                console.error('Error fetching analytics:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchAnalytics();
     }, []);
 
-// eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => {
-        fetchAnalyticsData();
-    }, [fetchAnalyticsData]);
-
-    const processTestsByMonth = (tests) => {
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const currentYear = new Date().getFullYear();
-        const monthlyCounts = new Array(12).fill(0);
-
-        tests.forEach(test => {
-            const testDate = new Date(test.createdAt);
-            if (testDate.getFullYear() === currentYear) {
-                monthlyCounts[testDate.getMonth()]++;
-            }
-        });
-
-        return {
-            labels: months,
+    const formatChartData = (data, label, labels, type = 'bar') => {
+        const chartData = {
+            labels,
             datasets: [{
-                label: 'Tests',
-                data: monthlyCounts,
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1,
-            }]
-        };
-    };
-
-    const processRevenueByMonth = (finances) => {
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const currentYear = new Date().getFullYear();
-        const monthlyRevenue = new Array(12).fill(0);
-
-        finances.forEach(record => {
-            if (record.transactionType === 'Income') {
-                const recordDate = new Date(record.date);
-                if (recordDate.getFullYear() === currentYear) {
-                    monthlyRevenue[recordDate.getMonth()] += parseFloat(record.amount);
-                }
-            }
-        });
-
-        return {
-            labels: months,
-            datasets: [{
-                label: 'Revenue ($)',
-                data: monthlyRevenue,
+                label,
+                data,
+                backgroundColor: type === 'line' ? 'rgba(75, 192, 192, 0.2)' : 'rgba(75, 192, 192, 0.6)',
                 borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                tension: 0.1,
+                borderWidth: 1,
+                tension: type === 'line' ? 0.1 : 0,
             }]
         };
+        return chartData;
     };
 
-    const reportStatusData = {
-        labels: ['Pending', 'Completed', 'Reviewed'],
-        datasets: [{
-            data: [
-                analyticsData.reportCount * 0.3, // Assuming 30% pending
-                analyticsData.reportCount * 0.6, // Assuming 60% completed
-                analyticsData.reportCount * 0.1  // Assuming 10% reviewed
-            ],
-            backgroundColor: [
-                'rgba(255, 206, 86, 0.6)',
-                'rgba(75, 192, 192, 0.6)',
-                'rgba(153, 102, 255, 0.6)',
-            ],
-            borderColor: [
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-            ],
-            borderWidth: 1,
-        }]
-    };
+    if (loading) return <p>Loading analytics...</p>;
+    if (!analytics) return <p>No analytics data found.</p>;
 
-    if (loading) {
-        return <div className="analytics"><h1>Lab Performance Overview</h1><p>Loading analytics data...</p></div>;
-    }
+    const dailyTestChartData = formatChartData(
+        analytics.charts.dailyTestCounts.map(d => d.count),
+        'Tests per Day',
+        analytics.charts.dailyTestCounts.map(d => d._id)
+    );
+
+    const monthlyReportChartData = formatChartData(
+        analytics.charts.monthlyReportCounts.map(d => d.count),
+        'Reports per Month',
+        ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].slice(0, analytics.charts.monthlyReportCounts.length)
+    );
+
+    const revenueTrendChartData = formatChartData(
+        analytics.charts.revenueTrends.map(d => d.total),
+        'Revenue per Month',
+        ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].slice(0, analytics.charts.revenueTrends.length),
+        'line'
+    );
 
     return (
-        <div className="analytics">
+        <div className="analytics-page">
             <h1>Lab Performance Overview</h1>
-
-            <div className="stats-overview">
-                <div className="stat-card">
-                    <h3>Total Patients</h3>
-                    <p>{analyticsData.patientCount}</p>
-                </div>
-                <div className="stat-card">
-                    <h3>Total Tests</h3>
-                    <p>{analyticsData.testCount}</p>
-                </div>
-                <div className="stat-card">
-                    <h3>Total Reports</h3>
-                    <p>{analyticsData.reportCount}</p>
-                </div>
-                <div className="stat-card">
-                    <h3>Total Appointments</h3>
-                    <p>{analyticsData.appointmentCount}</p>
-                </div>
+            <div className="stats-grid">
+                <div className="stat-card"><h3>Daily Patients</h3><p>{analytics.daily.patients}</p></div>
+                <div className="stat-card"><h3>Daily Tests</h3><p>{analytics.daily.tests}</p></div>
+                <div className="stat-card"><h3>Daily Revenue</h3><p>${analytics.daily.revenue.toFixed(2)}</p></div>
+                <div className="stat-card"><h3>Monthly Patients</h3><p>{analytics.monthly.patients}</p></div>
+                <div className="stat-card"><h3>Monthly Tests</h3><p>{analytics.monthly.tests}</p></div>
+                <div className="stat-card"><h3>Monthly Revenue</h3><p>${analytics.monthly.revenue.toFixed(2)}</p></div>
             </div>
-
-            <div className="charts-container">
-                <div className="chart">
-                    <h2>Tests by Month</h2>
-                    <Bar data={analyticsData.testsByMonth} />
-                </div>
-
-                <div className="chart">
-                    <h2>Revenue by Month</h2>
-                    <Line data={analyticsData.revenueByMonth} />
-                </div>
-
-                <div className="chart">
-                    <h2>Report Status Distribution</h2>
-                    <Pie data={reportStatusData} />
-                </div>
+            <div className="charts-grid">
+                <div className="chart-container"><h2>Daily Tests (Last 7 Days)</h2><Bar data={dailyTestChartData} /></div>
+                <div className="chart-container"><h2>Monthly Reports</h2><Bar data={monthlyReportChartData} /></div>
+                <div className="chart-container"><h2>Monthly Revenue Trends</h2><Line data={revenueTrendChartData} /></div>
             </div>
         </div>
     );
