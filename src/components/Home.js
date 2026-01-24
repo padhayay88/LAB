@@ -22,25 +22,25 @@ const Home = () => {
                         <FontAwesomeIcon icon={faUserPlus} size="2x" />
                         <h3>Register Patient</h3>
                     </div>
-                    <div className="card" onClick={() => navigate("/tests/new")}>
+                    <div className="card" onClick={() => navigate("/patients")}>
                         <FontAwesomeIcon icon={faVial} size="2x" />
                         <h3>Add Test</h3>
                     </div>
+                    <div className="card" onClick={() => navigate("/patients")}>
+                        <FontAwesomeIcon icon={faUserMd} size="2x" />
+                        <h3>Patients</h3>
+                    </div>
                     <div className="card" onClick={() => navigate("/reports")}>
                         <FontAwesomeIcon icon={faFileAlt} size="2x" />
-                        <h3>View Reports</h3>
+                        <h3>Reports</h3>
                     </div>
-                    <div className="card" onClick={() => navigate("/doctors")}>
-                        <FontAwesomeIcon icon={faUserMd} size="2x" />
-                        <h3>Doctors</h3>
-                    </div>
-                    <div className="card" onClick={() => navigate("/appointments")}>
+                    <div className="card" onClick={() => navigate("/analytics")}>
                         <FontAwesomeIcon icon={faCalendarAlt} size="2x" />
-                        <h3>Appointments</h3>
+                        <h3>Analytics</h3>
                     </div>
-                    <div className="card" onClick={() => navigate("/inventory")}>
+                    <div className="card" onClick={() => navigate("/admin")}>
                         <FontAwesomeIcon icon={faBoxes} size="2x" />
-                        <h3>Inventory</h3>
+                        <h3>Admin</h3>
                     </div>
                 </div>
             </section>
