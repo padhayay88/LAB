@@ -1,0 +1,249 @@
+/* Reports Management Page Styles */
+.reports-management-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-image: url('https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=1920&h=1080&fit=crop'), linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: overlay;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.reports-management-page::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+.reports-management-page > * {
+    position: relative;
+    z-index: 2;
+}
+
+.reports-management-page h1 {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    flex-wrap: wrap;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.filters select,
+.filters input {
+    padding: 0.8rem 1rem;
+    border: 2px solid #e1e8ed;
+    border-radius: 10px;
+    font-size: 1rem;
+    background: white;
+    transition: all 0.3s ease;
+    flex: 1;
+    min-width: 200px;
+}
+
+.filters select:focus,
+.filters input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.reports-table-container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.reports-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.reports-table thead {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+}
+
+.reports-table th {
+    padding: 1.2rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.reports-table tbody tr {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.reports-table tbody tr:hover {
+    background: rgba(102, 126, 234, 0.05);
+    transform: scale(1.02);
+}
+
+.reports-table td {
+    padding: 1rem 1.2rem;
+    color: #2c3e50;
+    font-size: 0.95rem;
+}
+
+.report-row {
+    position: relative;
+}
+
+.report-row::after {
+    content: '→';
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #667eea;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.report-row:hover::after {
+    opacity: 1;
+}
+
+.patient-name-cell {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.test-name-cell {
+    color: #667eea;
+    font-weight: 500;
+}
+
+.date-cell {
+    color: #7f8c8d;
+}
+
+.status-cell {
+    font-weight: 600;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    display: inline-block;
+}
+
+.status-pending {
+    background: rgba(243, 156, 18, 0.1);
+    color: #f39c12;
+}
+
+.status-completed {
+    background: rgba(46, 204, 113, 0.1);
+    color: #27ae60;
+}
+
+.loading-spinner {
+    text-align: center;
+    padding: 3rem;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.no-reports {
+    text-align: center;
+    padding: 3rem;
+    color: white;
+}
+
+.no-reports h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.no-reports p {
+    font-size: 1.1rem;
+    opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .reports-management-page {
+        padding: 1rem;
+    }
+    
+    .reports-management-page h1 {
+        font-size: 2rem;
+    }
+    
+    .filters {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .filters select,
+    .filters input {
+        min-width: 100%;
+    }
+    
+    .reports-table-container {
+        padding: 1rem;
+        border-radius: 15px;
+    }
+    
+    .reports-table {
+        font-size: 0.85rem;
+    }
+    
+    .reports-table th,
+    .reports-table td {
+        padding: 0.8rem 0.5rem;
+    }
+    
+    .report-row::after {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .filters select,
+    .filters input {
+        padding: 0.6rem 0.8rem;
+    }
+    
+    .reports-table th,
+    .reports-table td {
+        padding: 0.6rem 0.3rem;
+        font-size: 0.8rem;
+    }
+}

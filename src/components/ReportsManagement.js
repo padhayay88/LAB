@@ -56,27 +56,42 @@ const ReportsManagement = () => {
                 <input type="date" name="date" value={filters.date} onChange={handleFilterChange} />
                 <input type="text" name="patient" value={filters.patient} onChange={handleFilterChange} placeholder="Filter by Patient Name..." />
             </div>
-            {loading ? <p>Loading reports...</p> : (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Patient Name</th>
-                            <th>Test Name</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredReports.map(report => (
-                            <tr key={report._id} onClick={() => navigate(`/patient/${report.patientId._id}`)} className="report-row">
-                                <td>{report.patientId ? report.patientId.name : 'N/A'}</td>
-                                <td>{report.testId ? report.testId.testName : 'N/A'}</td>
-                                <td>{new Date(report.date).toLocaleDateString()}</td>
-                                <td>{report.status}</td>
+            {loading ? (
+                <div className="loading-spinner">
+                    <p>Loading reports...</p>
+                </div>
+            ) : filteredReports.length === 0 ? (
+                <div className="no-reports">
+                    <h3>No Reports Found</h3>
+                    <p>{filters.status !== 'All' || filters.date || filters.patient ? 'Try adjusting your filters' : 'No reports available yet'}</p>
+                </div>
+            ) : (
+                <div className="reports-table-container">
+                    <table className="reports-table">
+                        <thead>
+                            <tr>
+                                <th>Patient Name</th>
+                                <th>Test Name</th>
+                                <th>Date</th>
+                                <th>Status</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {filteredReports.map(report => (
+                                <tr key={report._id} onClick={() => navigate(`/patient/${report.patientId._id}`)} className="report-row">
+                                    <td className="patient-name-cell">{report.patientId ? report.patientId.name : 'N/A'}</td>
+                                    <td className="test-name-cell">{report.testId ? report.testId.testName : 'N/A'}</td>
+                                    <td className="date-cell">{new Date(report.date).toLocaleDateString()}</td>
+                                    <td>
+                                        <span className={`status-cell status-${report.status.toLowerCase()}`}>
+                                            {report.status}
+                                        </span>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
         </div>
     );

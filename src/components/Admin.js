@@ -62,7 +62,9 @@ const Admin = () => {
             <h1>Admin Dashboard</h1>
 
             {loading ? (
-                <p>Loading dashboard data...</p>
+                <div className="loading-spinner">
+                    <p>Loading dashboard data...</p>
+                </div>
             ) : (
                 <div className="dashboard-cards">
                     <div className="card">

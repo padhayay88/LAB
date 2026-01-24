@@ -59,8 +59,17 @@ const LabPerformanceOverview = () => {
         return chartData;
     };
 
-    if (loading) return <p>Loading analytics...</p>;
-    if (!analytics) return <p>No analytics data found.</p>;
+    if (loading) return (
+        <div className="loading-spinner">
+            <p>Loading analytics...</p>
+        </div>
+    );
+    if (!analytics) return (
+        <div className="no-analytics">
+            <h3>No Analytics Data</h3>
+            <p>Start using the system to see performance analytics</p>
+        </div>
+    );
 
     const dailyTestChartData = formatChartData(
         analytics.charts.dailyTestCounts.map(d => d.count),

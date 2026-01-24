@@ -11,7 +11,7 @@ const Home = () => {
             <header className="home-header">
                 <h1>Welcome to the Diagnostic Lab Management System</h1>
                 <p>Your one-stop solution for managing all diagnostic services efficiently.</p>
-                <button className="cta-button">Get Started</button>
+                <button className="cta-button" onClick={() => navigate("/dashboard")}>Get Started</button>
             </header>
 
             {/* Quick Action Cards */}

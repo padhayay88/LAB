@@ -31,7 +31,7 @@ const Patients = () => {
 
     return (
         <div className="patients-list-page">
-            <h1>Patient List</h1>
+            <h1>Patient Management</h1>
             <div className="toolbar">
                 <input
                     type="text"
@@ -41,29 +41,51 @@ const Patients = () => {
                 />
                 <button onClick={() => navigate('/patients/new')}>Register New Patient</button>
             </div>
-            {loading ? <p>Loading patients...</p> : (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Evening Number</th>
-                            <th>Patient Name</th>
-                            <th>Phone</th>
-                            <th>Total Tests</th>
-                            <th>Due Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredPatients.map(patient => (
-                            <tr key={patient.patientId} onClick={() => navigate(`/patient/${patient._id}`)} className="patient-row">
-                                <td>{patient.eveningNumber}</td>
-                                <td>{patient.name}</td>
-                                <td>{patient.phone}</td>
-                                <td>{patient.totalTests}</td>
-                                <td>${patient.dueAmount.toFixed(2)}</td>
+            {loading ? (
+                <div className="loading-spinner">
+                    <p>Loading patients...</p>
+                </div>
+            ) : filteredPatients.length === 0 ? (
+                <div className="no-patients">
+                    <h3>No Patients Found</h3>
+                    <p>{searchTerm ? 'Try adjusting your search terms' : 'Start by registering your first patient'}</p>
+                    <button onClick={() => navigate('/patients/new')} className="toolbar-button">
+                        Register First Patient
+                    </button>
+                </div>
+            ) : (
+                <div className="patients-table-container">
+                    <table className="patients-table">
+                        <thead>
+                            <tr>
+                                <th>Evening Number</th>
+                                <th>Patient Name</th>
+                                <th>Phone</th>
+                                <th>Total Tests</th>
+                                <th>Due Amount</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {filteredPatients.map(patient => (
+                                <tr 
+                                    key={patient.patientId} 
+                                    onClick={() => navigate(`/patient/${patient.patientId}`)} 
+                                    className="patient-row"
+                                >
+                                    <td className="evening-number">{patient.eveningNumber}</td>
+                                    <td className="patient-name">{patient.name}</td>
+                                    <td className="patient-phone">{patient.phone}</td>
+                                    <td>
+                                        <span className="test-count">{patient.totalTests}</span>
+                                    </td>
+                                    <td className="due-amount">
+                                        ${patient.dueAmount ? patient.dueAmount.toFixed(2) : '0.00'}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
         </div>
     );

@@ -4,7 +4,8 @@ import axios from 'axios';
 import './PatientProfile.css';
 
 const PatientProfile = () => {
-    const { id } = useParams();
+    const { id, patientId, _id } = useParams();
+    const patientIdentifier = patientId || _id || id;
     const [patientData, setPatientData] = useState({ patient: null, tests: [], reports: [], finances: [] });
     const [loading, setLoading] = useState(true);
 
@@ -15,14 +16,14 @@ const PatientProfile = () => {
     const fetchData = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/patients/${id}/details`);
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/patients/${patientIdentifier}/details`);
             setPatientData(response.data);
         } catch (error) {
             console.error('Error fetching patient details:', error);
         } finally {
             setLoading(false);
         }
-    }, [id]);
+    }, [patientIdentifier]);
 
     useEffect(() => {
         fetchData();
@@ -31,7 +32,7 @@ const PatientProfile = () => {
     const handleAddTest = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`${process.env.REACT_APP_API_URL}/tests`, { ...newTest, patientId: id });
+            await axios.post(`${process.env.REACT_APP_API_URL}/tests`, { ...newTest, patientId: patientIdentifier });
             setNewTest({ testName: '', price: '' });
             fetchData();
         } catch (error) {
@@ -53,7 +54,7 @@ const PatientProfile = () => {
         try {
             await axios.post(`${process.env.REACT_APP_API_URL}/finance`, { 
                 ...newPayment, 
-                patientId: id, 
+                patientId: patientIdentifier, 
                 transactionType: 'Income',
                 category: 'Test Payment'
             });
@@ -68,7 +69,7 @@ const PatientProfile = () => {
         if (!reportFile) return;
         const formData = new FormData();
         formData.append('report', reportFile);
-        formData.append('patientId', id);
+        formData.append('patientId', patientIdentifier);
         formData.append('testId', testId);
 
         try {

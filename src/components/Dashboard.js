@@ -66,41 +66,77 @@ const Dashboard = () => {
 
     return (
         <div className="dashboard">
-            <h1>Dashboard</h1>
+            <h1>Lab Management Dashboard</h1>
             {loading ? <p>Loading dashboard...</p> : (
                 <>
-                    <div className="stats-overview">
-                        <div className="stat-card"><h3>Total Patients (Today)</h3><p>{stats.totalPatientsToday}</p></div>
-                        <div className="stat-card"><h3>Total Tests (Today)</h3><p>{stats.totalTestsToday}</p></div>
-                        <div className="stat-card"><h3>Pending Reports</h3><p>{stats.pendingReports}</p></div>
-                        <div className="stat-card"><h3>Completed Reports</h3><p>{stats.completedReports}</p></div>
-                        <div className="stat-card"><h3>Today’s Revenue</h3><p>${stats.todaysRevenue.toFixed(2)}</p></div>
+                    <div className="dashboard-cards">
+                        <div className="dashboard-card">
+                            <h3>Total Patients (Today)</h3>
+                            <div className="number">{stats.totalPatientsToday}</div>
+                            <div className="subtitle">New registrations</div>
+                            <div className="trend up">↑ Active today</div>
+                        </div>
+                        <div className="dashboard-card">
+                            <h3>Total Tests (Today)</h3>
+                            <div className="number">{stats.totalTestsToday}</div>
+                            <div className="subtitle">Lab tests conducted</div>
+                            <div className="trend up">↑ Processing</div>
+                        </div>
+                        <div className="dashboard-card">
+                            <h3>Pending Reports</h3>
+                            <div className="number">{stats.pendingReports}</div>
+                            <div className="subtitle">Awaiting completion</div>
+                            <div className="trend down">↓ To be done</div>
+                        </div>
+                        <div className="dashboard-card">
+                            <h3>Completed Reports</h3>
+                            <div className="number">{stats.completedReports}</div>
+                            <div className="subtitle">Finished today</div>
+                            <div className="trend up">↑ Completed</div>
+                        </div>
+                        <div className="dashboard-card">
+                            <h3>Today's Revenue</h3>
+                            <div className="number">${stats.todaysRevenue.toFixed(2)}</div>
+                            <div className="subtitle">Total income</div>
+                            <div className="trend up">↑ Good day</div>
+                        </div>
                     </div>
 
-                    <div className="todays-patients">
-                        <h2>Today's Registered Patients</h2>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Evening Number</th>
-                                    <th>Patient Name</th>
-                                    <th>Phone Number</th>
-                                    <th>Last Test</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    <div className="dashboard-sections">
+                        <div className="dashboard-section">
+                            <h2>Today's Registered Patients</h2>
+                            <div className="patient-list">
                                 {todaysPatients.map(patient => (
-                                    <tr key={patient.patientId}>
-                                        <td>{patient.eveningNumber}</td>
-                                        <td><Link to={`/patient/${patient._id}`}>{patient.name}</Link></td>
-                                        <td>{patient.phone}</td>
-                                        <td>{patient.lastTest}</td>
-                                        <td>{patient.status}</td>
-                                    </tr>
+                                    <div key={patient.patientId} className="patient-item">
+                                        <div className="patient-info">
+                                            <div className="patient-name">{patient.name}</div>
+                                            <div className="patient-details">
+                                                #{patient.eveningNumber} • {patient.phone} • {patient.lastTest}
+                                            </div>
+                                        </div>
+                                        <div className="patient-actions">
+                                            <Link to={`/patient/${patient._id}`} className="btn-small btn-primary">
+                                                View Details
+                                            </Link>
+                                        </div>
+                                    </div>
                                 ))}
-                            </tbody>
-                        </table>
+                            </div>
+                        </div>
+                        <div className="dashboard-section">
+                            <h2>Quick Actions</h2>
+                            <div style={{display: 'flex', flexDirection: 'column', gap: '1rem'}}>
+                                <Link to="/patients/new" className="btn-small btn-primary" style={{padding: '1rem', textAlign: 'center'}}>
+                                    Register New Patient
+                                </Link>
+                                <Link to="/patients" className="btn-small btn-primary" style={{padding: '1rem', textAlign: 'center'}}>
+                                    View All Patients
+                                </Link>
+                                <Link to="/reports" className="btn-small btn-primary" style={{padding: '1rem', textAlign: 'center'}}>
+                                    Manage Reports
+                                </Link>
+                            </div>
+                        </div>
                     </div>
                 </>
             )}
