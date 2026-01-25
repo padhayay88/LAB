@@ -52,16 +52,28 @@ const PatientProfile = () => {
     const handleAddPayment = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(`${process.env.REACT_APP_API_URL}/finance`, { 
+            const paymentData = {
                 ...newPayment, 
                 patientId: patientIdentifier, 
                 transactionType: 'Income',
-                category: 'Test Payment'
-            });
+                category: 'Test Payment',
+                status: 'Paid'
+            };
+            
+            console.log('Adding payment:', paymentData);
+            const response = await axios.post(`${process.env.REACT_APP_API_URL}/finance`, paymentData);
+            console.log('Payment added successfully:', response.data);
+            
             setNewPayment({ amount: '', paymentMode: 'Cash' });
-            fetchData();
+            
+            // Refresh data to show the new payment
+            await fetchData();
+            
+            // Show success message
+            alert('Payment added successfully!');
         } catch (error) {
             console.error('Error adding payment:', error);
+            alert('Error adding payment: ' + (error.response?.data?.message || error.message));
         }
     };
 
@@ -173,15 +185,34 @@ const PatientProfile = () => {
                     <button type="submit">Add Payment</button>
                 </form>
                 <table>
-                    <thead><tr><th>Amount</th><th>Payment Mode</th><th>Date</th></tr></thead>
+                    <thead><tr><th>Amount</th><th>Payment Mode</th><th>Date</th><th>Status</th></tr></thead>
                     <tbody>
-                        {finances.filter(f => f.transactionType === 'Income').map(payment => (
-                            <tr key={payment._id}>
-                                <td>${payment.amount.toFixed(2)}</td>
-                                <td>{payment.paymentMode}</td>
-                                <td>{new Date(payment.date).toLocaleDateString()}</td>
+                        {finances.filter(f => f.transactionType === 'Income').length === 0 ? (
+                            <tr>
+                                <td colSpan="4" style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
+                                    No payments recorded yet
+                                </td>
                             </tr>
-                        ))}
+                        ) : (
+                            finances.filter(f => f.transactionType === 'Income').sort((a, b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt)).map(payment => (
+                                <tr key={payment._id}>
+                                    <td>${payment.amount.toFixed(2)}</td>
+                                    <td>{payment.paymentMode}</td>
+                                    <td>{new Date(payment.date || payment.createdAt).toLocaleDateString()}</td>
+                                    <td>
+                                        <span style={{ 
+                                            background: '#27ae60', 
+                                            color: 'white', 
+                                            padding: '4px 8px', 
+                                            borderRadius: '12px', 
+                                            fontSize: '12px' 
+                                        }}>
+                                            {payment.status || 'Paid'}
+                                        </span>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
             </div>

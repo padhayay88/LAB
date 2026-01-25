@@ -13,10 +13,30 @@ const Patients = () => {
         const fetchEnrichedPatients = async () => {
             setLoading(true);
             try {
+                console.log('Fetching patients from:', `${process.env.REACT_APP_API_URL}/patients/enriched`);
                 const response = await axios.get(`${process.env.REACT_APP_API_URL}/patients/enriched`);
+                console.log('Patients response:', response.data);
                 setPatients(response.data);
             } catch (error) {
                 console.error('Error fetching enriched patients:', error);
+                console.error('Error details:', error.response?.data);
+                
+                // Fallback to regular patients endpoint
+                try {
+                    console.log('Trying fallback to regular patients endpoint');
+                    const fallbackResponse = await axios.get(`${process.env.REACT_APP_API_URL}/patients`);
+                    console.log('Fallback patients response:', fallbackResponse.data);
+                    
+                    // Enrich the data manually
+                    const enrichedData = fallbackResponse.data.map(patient => ({
+                        ...patient,
+                        totalTests: 0,
+                        dueAmount: 0
+                    }));
+                    setPatients(enrichedData);
+                } catch (fallbackError) {
+                    console.error('Fallback also failed:', fallbackError);
+                }
             } finally {
                 setLoading(false);
             }

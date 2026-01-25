@@ -18,16 +18,32 @@ const Payments = () => {
 
     const fetchPayments = async () => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/finance`);
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}/payments`);
+            console.log('Fetched payments:', response.data);
+            
             const enrichedPayments = await Promise.all(response.data.map(async (payment) => {
                 try {
                     const patientResponse = await axios.get(`${process.env.REACT_APP_API_URL}/patients/${payment.patientId}`);
-                    return { ...payment, patientName: patientResponse.data.name };
+                    return { 
+                        ...payment, 
+                        patientName: patientResponse.data.name,
+                        patientPhone: patientResponse.data.phone,
+                        patientAge: patientResponse.data.age,
+                        patientGender: patientResponse.data.gender
+                    };
                 } catch {
-                    return { ...payment, patientName: 'Unknown' };
+                    return { 
+                        ...payment, 
+                        patientName: 'Unknown Patient',
+                        patientPhone: 'N/A',
+                        patientAge: 'N/A',
+                        patientGender: 'N/A'
+                    };
                 }
             }));
             setPayments(enrichedPayments);
+            setFilteredPayments(enrichedPayments);
+            console.log('Enriched payments:', enrichedPayments);
         } catch (error) {
             console.error('Error fetching payments:', error);
         } finally {

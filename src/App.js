@@ -1,4 +1,3 @@
-import Navbar from './components/Navbar';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
@@ -19,15 +18,9 @@ import NotFound from './components/NotFound';
 import './App.css';
 
 function App() {
-  const handleLogout = () => {
-    // In a real app, you'd handle token removal here.
-    console.log('User logged out');
-  };
-
   return (
     <Router>
       <div className="App">
-        <Navbar onLogout={handleLogout} />
         <Routes>
           <Route path="/" element={<MainLayout><Home /></MainLayout>} />
           <Route path="/home" element={<MainLayout><Home /></MainLayout>} />
@@ -42,10 +35,8 @@ function App() {
           <Route path="/admin" element={<MainLayout><Admin /></MainLayout>} />
           <Route path="/patients/new" element={<MainLayout><AddPatient /></MainLayout>} />
           <Route path="/patient/:patientId" element={<MainLayout><PatientProfile /></MainLayout>} />
-          <Route path="/patient-by-id/:_id" element={<MainLayout><PatientProfile /></MainLayout>} />
           <Route path="*" element={<MainLayout><NotFound /></MainLayout>} />
         </Routes>
-        <Footer />
       </div>
     </Router>
   );

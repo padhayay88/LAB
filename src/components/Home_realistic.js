@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Home.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserPlus, faVial, faFileAlt, faChartLine, faUsers, faFlask, faClipboardList, faIndianRupeeSign, faCalendarAlt, faBoxes } from '@fortawesome/free-solid-svg-icons';
+import { faUserPlus, faVial, faFileAlt, faUserMd, faChartLine, faCog, faUsers, faFlask, faClipboardList, faIndianRupeeSign } from '@fortawesome/free-solid-svg-icons';
 
 const Home = () => {
     const navigate = useNavigate();
@@ -15,59 +15,56 @@ const Home = () => {
         pendingReports: 0,
         activeTests: 0
     });
-    const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState('');
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchDashboardStats();
     }, []);
 
     const fetchDashboardStats = async () => {
-        setLoading(true);
         try {
-            console.log('Fetching dashboard stats from MongoDB...');
-            console.log('API URL:', process.env.REACT_APP_API_URL);
+            // Fetch patients
+            const patientsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/patients`);
+            const patients = patientsResponse.data;
             
-            // Only use MongoDB backend
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}/dashboard/summary`);
-            console.log('MongoDB Dashboard API response:', response.data);
+            // Fetch tests
+            const testsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/tests`);
+            const tests = testsResponse.data;
             
-            if (response.data.success) {
-                const data = response.data.data;
-                const newStats = {
-                    totalPatients: data.summary.totalPatients,
-                    todayPatients: data.summary.todayPatients,
-                    totalRevenue: data.summary.todayRevenue,
-                    todayRevenue: data.summary.todayRevenue,
-                    pendingReports: data.summary.pendingReports,
-                    activeTests: data.summary.pendingReports
-                };
-                
-                console.log('MongoDB stats calculated:', newStats);
-                setStats(newStats);
-            } else {
-                throw new Error(response.data.message || 'Failed to fetch dashboard data');
-            }
+            // Fetch finance
+            const financeResponse = await axios.get(`${process.env.REACT_APP_API_URL}/finance`);
+            const finances = financeResponse.data;
+            
+            // Calculate today's data
+            const today = new Date().toDateString();
+            const todayPatients = patients.filter(p => 
+                new Date(p.registrationDate || p.createdAt).toDateString() === today
+            );
+            
+            const todayFinances = finances.filter(f => 
+                f.transactionType === 'Income' && 
+                new Date(f.date || f.createdAt).toDateString() === today
+            );
+            
+            const totalRevenue = finances
+                .filter(f => f.transactionType === 'Income')
+                .reduce((sum, f) => sum + parseFloat(f.amount), 0);
+            
+            const todayRevenue = todayFinances.reduce((sum, f) => sum + parseFloat(f.amount), 0);
+            
+            const pendingReports = tests.filter(t => t.status !== 'Completed').length;
+            const activeTests = tests.filter(t => t.status === 'In Progress' || t.status === 'Sample Collected').length;
+
+            setStats({
+                totalPatients: patients.length,
+                todayPatients: todayPatients.length,
+                totalRevenue: totalRevenue,
+                todayRevenue: todayRevenue,
+                pendingReports: pendingReports,
+                activeTests: activeTests
+            });
         } catch (error) {
             console.error('Error fetching dashboard stats:', error);
-            console.error('Error details:', error.response?.data);
-            
-            // Check if it's just empty database
-            if (error.response?.status === 200 && (!error.response.data.data || error.response.data.data.summary.totalPatients === 0)) {
-                setMessage('📋 Database is empty. Register your first patient to get started!');
-            } else {
-                setMessage('❌ Unable to connect to database. Please check if backend is running.');
-            }
-            
-            // Set default values if API fails or database is empty
-            setStats({
-                totalPatients: 0,
-                todayPatients: 0,
-                totalRevenue: 0,
-                todayRevenue: 0,
-                pendingReports: 0,
-                activeTests: 0
-            });
         } finally {
             setLoading(false);
         }
@@ -84,39 +81,6 @@ const Home = () => {
 
     return (
         <div className="home">
-            {/* Error Message */}
-            {message && (
-                <div className="info-message" style={{
-                    position: 'fixed',
-                    top: '20px',
-                    right: '20px',
-                    background: message.includes('❌') ? '#e74c3c' : '#3498db',
-                    color: 'white',
-                    padding: '1rem 1.5rem',
-                    borderRadius: '8px',
-                    zIndex: 1000,
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-                    maxWidth: '400px',
-                    fontSize: '0.9rem'
-                }}>
-                    {message}
-                    <button 
-                        onClick={() => setMessage('')}
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            color: 'white',
-                            fontSize: '1.2rem',
-                            marginLeft: '1rem',
-                            cursor: 'pointer',
-                            float: 'right'
-                        }}
-                    >
-                        ×
-                    </button>
-                </div>
-            )}
-
             {/* Hero Section */}
             <header className="home-header">
                 <div className="hero-content">
@@ -124,15 +88,15 @@ const Home = () => {
                     <p>Advanced Diagnostic Lab Management System for Modern Healthcare</p>
                     <div className="hero-stats">
                         <div className="hero-stat">
-                            <span className="stat-number">{loading ? '...' : stats.totalPatients}</span>
+                            <span className="stat-number">{stats.totalPatients}</span>
                             <span className="stat-label">Total Patients</span>
                         </div>
                         <div className="hero-stat">
-                            <span className="stat-number">{loading ? '...' : stats.todayPatients}</span>
+                            <span className="stat-number">{stats.todayPatients}</span>
                             <span className="stat-label">Today</span>
                         </div>
                         <div className="hero-stat">
-                            <span className="stat-number">{loading ? '...' : formatCurrency(stats.todayRevenue)}</span>
+                            <span className="stat-number">{formatCurrency(stats.todayRevenue)}</span>
                             <span className="stat-label">Today's Revenue</span>
                         </div>
                     </div>
@@ -151,7 +115,7 @@ const Home = () => {
                             <FontAwesomeIcon icon={faIndianRupeeSign} />
                         </div>
                         <div className="stat-info">
-                            <h3>{loading ? '...' : formatCurrency(stats.totalRevenue)}</h3>
+                            <h3>{formatCurrency(stats.totalRevenue)}</h3>
                             <p>Total Revenue</p>
                         </div>
                     </div>
@@ -160,7 +124,7 @@ const Home = () => {
                             <FontAwesomeIcon icon={faUsers} />
                         </div>
                         <div className="stat-info">
-                            <h3>{loading ? '...' : stats.totalPatients}</h3>
+                            <h3>{stats.totalPatients}</h3>
                             <p>Total Patients</p>
                         </div>
                     </div>
@@ -169,7 +133,7 @@ const Home = () => {
                             <FontAwesomeIcon icon={faFlask} />
                         </div>
                         <div className="stat-info">
-                            <h3>{loading ? '...' : stats.activeTests}</h3>
+                            <h3>{stats.activeTests}</h3>
                             <p>Active Tests</p>
                         </div>
                     </div>
@@ -178,7 +142,7 @@ const Home = () => {
                             <FontAwesomeIcon icon={faClipboardList} />
                         </div>
                         <div className="stat-info">
-                            <h3>{loading ? '...' : stats.pendingReports}</h3>
+                            <h3>{stats.pendingReports}</h3>
                             <p>Pending Reports</p>
                         </div>
                     </div>

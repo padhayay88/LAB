@@ -11,19 +11,40 @@ const ReportsManagement = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchEnrichedReports = async () => {
+        const fetchReports = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`${process.env.REACT_APP_API_URL}/reports/enriched`);
-                setReports(response.data);
-                setFilteredReports(response.data);
+                const response = await axios.get(`${process.env.REACT_APP_API_URL}/reports`);
+                console.log('Fetched reports:', response.data);
+                
+                const enrichedReports = await Promise.all(response.data.map(async (report) => {
+                    try {
+                        const patientResponse = await axios.get(`${process.env.REACT_APP_API_URL}/patients/${report.patientId}`);
+                        const testResponse = await axios.get(`${process.env.REACT_APP_API_URL}/tests/${report.testId}`);
+                        return { 
+                            ...report, 
+                            patientName: patientResponse.data.name,
+                            patientPhone: patientResponse.data.phone,
+                            testInfo: testResponse.data
+                        };
+                    } catch {
+                        return { 
+                            ...report, 
+                            patientName: 'Unknown Patient',
+                            patientPhone: 'N/A'
+                        };
+                    }
+                }));
+                setReports(enrichedReports);
+                setFilteredReports(enrichedReports);
+                console.log('Enriched reports:', enrichedReports);
             } catch (error) {
-                console.error('Error fetching enriched reports:', error);
+                console.error('Error fetching reports:', error);
             } finally {
                 setLoading(false);
             }
         };
-        fetchEnrichedReports();
+        fetchReports();
     }, []);
 
     useEffect(() => {

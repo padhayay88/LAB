@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Home.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserPlus, faVial, faFileAlt, faChartLine, faUsers, faFlask, faClipboardList, faIndianRupeeSign, faCalendarAlt, faBoxes } from '@fortawesome/free-solid-svg-icons';
+import { faUserPlus, faVial, faFileAlt, faUserMd, faChartLine, faCog, faUsers, faFlask, faClipboardList, faIndianRupeeSign, faCalendarAlt, faBoxes } from '@fortawesome/free-solid-svg-icons';
 
 const Home = () => {
     const navigate = useNavigate();
